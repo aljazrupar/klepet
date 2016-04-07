@@ -99,6 +99,13 @@ $(document).ready(function() {
     for (var i=0; i < uporabniki.length; i++) {
       $('#seznam-uporabnikov').append(divElementEnostavniTekst(uporabniki[i]));
     }
+    
+    $('#seznam-uporabnikov div').click(function(){ // dodajanje implementacije za zasebno ______________________________________________________________________________________________
+      var ime = $(this).text();
+      
+      $("#poslji-sporocilo").val('/zasebno "'+ ime + '" ');
+      $("#poslji-sporocilo").focus();
+    });
   });
 
   setInterval(function() {
