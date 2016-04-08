@@ -1,9 +1,24 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
+  
+  var jeSlika = sporocilo.indexOf('.jpg') > -1 || 
+  sporocilo.indexOf('.gif') > -1 
+  
+  || 
+  sporocilo.indexOf('.png') > -1;
+  
+  if(jeSlika){
+    sporocilo = sporocilo.replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />').replace('gif\' /&gt;', 'gif\' />');
+    return $('<div style="font-weight: bold"></div>').html(sporocilo);
+   
+  }
+  
   if (jeSmesko) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
-  } else {
+  }
+ 
+    else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
 }
@@ -14,7 +29,13 @@ function divElementHtmlTekst(sporocilo) {
 
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
+  
   sporocilo = dodajSmeske(sporocilo);
+  
+
+  sporocilo = dodajSliko(sporocilo); //________________________________________________________________________________________
+  
+
   var sistemskoSporocilo;
 
   if (sporocilo.charAt(0) == '/') {
@@ -28,9 +49,13 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   }
+  
 
   $('#poslji-sporocilo').val('');
 }
+
+
+
 
 var socket = io.connect();
 var trenutniVzdevek = "", trenutniKanal = "";
@@ -39,6 +64,7 @@ var vulgarneBesede = [];
 $.get('/swearWords.txt', function(podatki) {
   vulgarneBesede = podatki.split('\r\n');
 });
+
 
 function filtirirajVulgarneBesede(vhod) {
   for (var i in vulgarneBesede) {
@@ -122,6 +148,23 @@ $(document).ready(function() {
   
   
 });
+
+  function dodajSliko(vhodnoBesedilo) {
+    
+ var scan = "";
+  var slika = vhodnoBesedilo.match(new RegExp(/https?:\/\/.*?\.(jpg|png|gif)/gi));
+  
+  
+    
+    for(var i = 0; i<slika.length; i++) {
+      scan += "<img src='"+ slika[i] + "' style='width:200px; margin-left:20px;' />";
+    }
+    
+    vhodnoBesedilo += scan;
+
+  return vhodnoBesedilo;
+}
+
 
 function dodajSmeske(vhodnoBesedilo) {
   var preslikovalnaTabela = {
