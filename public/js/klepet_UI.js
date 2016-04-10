@@ -40,10 +40,11 @@ function procesirajVnosUporabnika(klepetApp, socket) {
   
   
   
-  sporocilo = dodajSmeske(sporocilo);
+  sporocilo = dodajSmeske(sporocilo); //________________________________________________________________________________________
   
-
-   //________________________________________________________________________________________
+  if(sporocilo.indexOf('dregljaj')){
+    
+  }
   
   sporocilo = dodajVideo(sporocilo);
   
@@ -77,6 +78,7 @@ $.get('/swearWords.txt', function(podatki) {
 });
 
 
+  
 function filtirirajVulgarneBesede(vhod) {
   for (var i in vulgarneBesede) {
     vhod = vhod.replace(new RegExp('\\b' + vulgarneBesede[i] + '\\b', 'gi'), function() {
@@ -92,6 +94,9 @@ function filtirirajVulgarneBesede(vhod) {
 $(document).ready(function() {
   var klepetApp = new Klepet(socket);
 
+
+  
+  
   socket.on('vzdevekSpremembaOdgovor', function(rezultat) {
     var sporocilo;
     if (rezultat.uspesno) {
@@ -103,6 +108,19 @@ $(document).ready(function() {
     }
     $('#sporocila').append(divElementHtmlTekst(sporocilo));
   });
+
+
+
+    socket.on('dregljaj', function(rezultat){ // izbrisi!!!!!!!!!!!!
+    console.log("izveden dregljaj");
+    $('#vsebina').jrumble();
+    $('#vsebina').trigger('startRumble');
+    setTimeout(function(){
+      $('#vsebina').trigger('stopRumble');
+    }, 1500);
+  });
+
+
 
   socket.on('pridruzitevOdgovor', function(rezultat) {
     trenutniKanal = rezultat.kanal;
@@ -159,6 +177,7 @@ $(document).ready(function() {
   
   
 });
+
 
   function dodajSliko(vhodnoBesedilo) {
     

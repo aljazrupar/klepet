@@ -21,6 +21,8 @@ Klepet.prototype.procesirajUkaz = function(ukaz) {
   ukaz = besede[0].substring(1, besede[0].length).toLowerCase();
   var sporocilo = false;
 
+
+var count = 0;
   switch(ukaz) {
     case 'pridruzitev':
       besede.shift();
@@ -30,8 +32,11 @@ Klepet.prototype.procesirajUkaz = function(ukaz) {
     case 'vzdevek':
       besede.shift();
       var vzdevek = besede.join(' ');
+      
       this.socket.emit('vzdevekSpremembaZahteva', vzdevek);
       break;
+      
+      
     case 'zasebno':
       besede.shift();
       var besedilo = besede.join(' ');
@@ -39,12 +44,26 @@ Klepet.prototype.procesirajUkaz = function(ukaz) {
       if (parametri) {
         this.socket.emit('sporocilo', { vzdevek: parametri[1], besedilo: parametri[3] });
         sporocilo = '(zasebno za ' + parametri[1] + '): ' + parametri[3];
-      } else {
+      } 
+      else {
         sporocilo = 'Neznan ukaz';
       }
-      
-      
       break;
+      
+    case 'dregljaj':
+        besede.shift();
+        var username = besede.join(' ');
+        if(username){
+        this.socket.emit('dregljaj', username);
+        sporocilo ='Dregljaj za ' + username;
+        console.log("vzdevek = " + username);
+        }
+        else{
+        sporocilo = 'Neznan ukaz.';
+        }
+      break;
+      
+      
     default:
       sporocilo = 'Neznan ukaz.';
       break;
